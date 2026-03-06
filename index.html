@@ -773,20 +773,67 @@
     }
 
     async function startCamera() {
+
+async function startCamera() {
+  console.log("startCamera called");
+  setStatus(cameraStatus, "Requesting permission...", "warn");
+
+  if (!window.isSecureContext) {
+    console.log("Not secure context");
+    alert("Camera access requires HTTPS or localhost.");
+    return;
+  }
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.log("getUserMedia unavailable");
+    alert("This browser does not expose getUserMedia here.");
+    return;
+  }
+
+  try {
+    console.log("About to call getUserMedia");
+
+    const streamPromise = navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
+        width: { ideal: 640 },
+        height: { ideal: 480 },
+        frameRate: { ideal: 24, max: 30 }
+      },
+      audio: false
+    });
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Camera request timed out")), 8000)
+    );
+
+    stream = await Promise.race([streamPromise, timeoutPromise]);
+
+    console.log("getUserMedia resolved", stream);
+    video.srcObject = stream;
+    await video.play();
+
+    resizeOverlay();
+    running = true;
+    setStatus(cameraStatus, "Running", "good");
+    startBtn.disabled = true;
+    startBtn.textContent = "Camera Running";
+    renderLoop();
+  } catch (error) {
+    console.error("Camera start failed:", error);
+
+    const name = error?.name || "UnknownError";
+    setStatus(cameraStatus, `Error: ${name}`, "bad");
+
+    alert(`Camera failed: ${name} ${error?.message ? "- " + error.message : ""}`);
+  }
+}
+
       if (!handLandmarker) {
         alert("The hand tracking model is not ready yet.");
         return;
       }
 
-
-    if (!window.isSecureContext) {
-    alert("Camera access requires HTTPS or localhost.");
-    return;
-    }
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    alert("This browser does not support camera access here.");
-    return;
     }
 
       try {
@@ -814,7 +861,6 @@
         setStatus(cameraStatus, "Permission denied", "bad");
         alert("Could not start the camera. Check webcam permission and make sure the page is running on HTTPS or localhost.");
       }
-    }
 
     function stopCamera() {
       running = false;
