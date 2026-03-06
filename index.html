@@ -778,10 +778,24 @@
         return;
       }
 
+
+    if (!window.isSecureContext) {
+    alert("Camera access requires HTTPS or localhost.");
+    return;
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("This browser does not support camera access here.");
+    return;
+    }
+
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: "user"
+            facingMode: "user",
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 24, max: 30 }
           },
           audio: false
         });
