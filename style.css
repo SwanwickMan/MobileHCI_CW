@@ -197,7 +197,7 @@ video {
   padding: 10px 6px;
   display: grid;
   place-items: center;
-  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .target-btn.hovered {
@@ -262,7 +262,6 @@ video {
   opacity: 1;
 }
 
-/* keep buttons horizontal on mobile too */
 @media (max-width: 600px) {
   .panel {
     padding: 12px;
