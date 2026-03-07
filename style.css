@@ -283,3 +283,27 @@ video {
     height: 24px;
   }
 }
+
+.volume-stage {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.volume-track {
+  width: 90%;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.volume-fill {
+  height: 100%;
+  width: 50%;
+  background: linear-gradient(90deg, #38bdf8 0%, #22c55e 100%);
+  transition: width 0.08s linear;
+}

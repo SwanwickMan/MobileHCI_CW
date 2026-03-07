@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Tracking Button Selector Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="panel intro-card">
+      <h1>Hand Tracking Button Selector Prototype</h1>
+      <p>
+        Point with your index and middle fingers to <strong>grasp</strong> the cursor, then move your hand horizontally to move the cursor.
+        Hover over a button to select it and release the gesture.
+      </p>
+    </section>
+
+    <section class="panel controls">
+      <div class="row">
+        <button id="startBtn" class="ui-btn">Start Camera</button>
+      </div>
+
+      <div class="readout">
+        <div class="label">System status</div>
+        <div id="systemStatus" class="value warn">Loading model…</div>
+      </div>
+    </section>
+
+    <section class="panel video-wrap" style="display: none;">
+      <video id="video" autoplay playsinline muted></video>
+    </section>
+
+    <section class="panel prototype">
+      <div class="prototype-header">
+        <div>
+          <strong>Prototype task:</strong> hover over one of the five targets while your hand is closed.
+        </div>
+      </div>
+
+      <div class="prototype-stage">
+        <div id="cursor" class="cursor"></div>
+
+        <div class="button-row" id="buttonRow">
+          <div class="target-btn" data-index="0">Button 1</div>
+          <div class="target-btn" data-index="1">Button 2</div>
+          <div class="target-btn" data-index="2">Button 3</div>
+          <div class="target-btn" data-index="3">Button 4</div>
+          <div class="target-btn" data-index="4">Button 5</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="scriptbuttons.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Tracking Volume Control Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="panel intro-card">
+      <h1>Hand Tracking Volume Control Prototype</h1>
+      <p>
+        Point with your index and middle fingers to <strong>grasp</strong> the volume control,
+        then move your hand horizontally to change the audio volume. Release the gesture to stop adjusting.
+      </p>
+    </section>
+
+    <section class="panel controls">
+      <div class="row">
+        <button id="startBtn" class="ui-btn">Start Camera</button>
+        <button id="playAudioBtn" class="ui-btn">Play Audio</button>
+        <button id="pauseAudioBtn" class="ui-btn">Pause Audio</button>
+      </div>
+
+      <div class="readout">
+        <div class="label">System status</div>
+        <div id="systemStatus" class="value warn">Loading model…</div>
+
+        <div class="label">Volume</div>
+        <div id="volumeValue" class="value">50%</div>
+      </div>
+    </section>
+
+    <section class="panel video-wrap" style="display: none;">
+      <video id="video" autoplay playsinline muted></video>
+    </section>
+
+    <section class="panel prototype">
+      <div class="prototype-header">
+        <div>
+          <strong>Prototype task:</strong> adjust the volume by moving the cursor horizontally while using the gesture.
+        </div>
+      </div>
+
+      <div class="prototype-stage volume-stage">
+        <div id="cursor" class="cursor"></div>
+
+        <div class="volume-track">
+          <div id="volumeFill" class="volume-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <audio id="audioPlayer" loop>
+      <source src="audio.mp3" type="audio/mpeg" />
+    </audio>
+  </main>
+
+  <script type="module" src="scriptaudio.js"></script>
+</body>
+</html>
