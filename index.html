@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
-    <section class="card intro-card">
+  <main class="app">
+    <section class="panel intro-card">
       <h1>Hand Tracking Button Selector Prototype</h1>
       <p>
         Close your hand to <strong>grasp</strong> the cursor, then move your hand left or right to move it horizontally.
@@ -16,7 +16,7 @@
       </p>
     </section>
 
-    <section class="card controls">
+    <section class="panel controls">
       <div class="row">
         <button id="startBtn" class="ui-btn">Start Camera</button>
         <button id="resetBtn" class="ui-btn secondary">Reset</button>
@@ -59,18 +59,14 @@
         <span id="graspValue">1.55</span>
         <input id="graspRange" type="range" min="1.0" max="2.4" step="0.05" value="1.55" />
       </div>
-
-      <p class="small">
-        Put <code>index.html</code>, <code>style.css</code>, <code>script.js</code>, and <code>hand_landmarker.task</code> in the same folder.
-      </p>
     </section>
 
-    <section class="card video-wrap">
+    <section class="panel video-wrap">
       <video id="video" autoplay playsinline muted></video>
       <canvas id="overlay"></canvas>
     </section>
 
-    <section class="prototype">
+    <section class="panel prototype">
       <div class="prototype-header">
         <div>
           <strong>Prototype task:</strong> hover over one of the five targets while your hand is closed.
@@ -78,18 +74,20 @@
         <div id="modePill" class="status-pill">Idle</div>
       </div>
 
-      <div id="toast" class="toast">Selected</div>
-      <div id="cursor" class="cursor"></div>
+      <div class="prototype-stage">
+        <div id="toast" class="toast">Selected</div>
+        <div id="cursor" class="cursor"></div>
 
-      <div class="button-row" id="buttonRow">
-        <div class="target-btn" data-index="0">Button 1</div>
-        <div class="target-btn" data-index="1">Button 2</div>
-        <div class="target-btn" data-index="2">Button 3</div>
-        <div class="target-btn" data-index="3">Button 4</div>
-        <div class="target-btn" data-index="4">Button 5</div>
+        <div class="button-row" id="buttonRow">
+          <div class="target-btn" data-index="0">Button 1</div>
+          <div class="target-btn" data-index="1">Button 2</div>
+          <div class="target-btn" data-index="2">Button 3</div>
+          <div class="target-btn" data-index="3">Button 4</div>
+          <div class="target-btn" data-index="4">Button 5</div>
+        </div>
       </div>
     </section>
-  </div>
+  </main>
 
   <script type="module" src="script.js"></script>
 </body>
