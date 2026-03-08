@@ -7,7 +7,6 @@ const startBtn = document.getElementById("startBtn");
 const video = document.getElementById("video");
 const cursorEl = document.getElementById("cursor");
 const buttons = [...document.querySelectorAll(".target-btn")];
-
 const systemStatus = document.getElementById("systemStatus");
 
 let handLandmarker = null;
@@ -21,6 +20,9 @@ const LOST_HAND_GRACE_MS = 200;
 const GESTURE_ON_MS = 90;
 const GESTURE_OFF_MS = 140;
 
+// Number of correct presses needed to finish the task
+const TASK_LENGTH = buttons.length;
+
 const state = {
   cursorX: 0.5,
   smoothedHandX: 0.5,
@@ -30,14 +32,37 @@ const state = {
   anchorCursorX: 0.5,
   pendingSelectionIndex: null,
   wasGrabbingLastFrame: false,
-  activatedIndex: null,
   gestureSeenSince: 0,
   gestureLostSince: 0
+};
+
+const task = {
+  currentTargetIndex: null,
+  correctPresses: 0,
+  missedAttempts: 0,
+  started: false,
+  completed: false,
+  startTimeMs: 0,
+  endTimeMs: 0
 };
 
 function setStatus(el, text, className = "") {
   el.textContent = text;
   el.className = `value ${className}`.trim();
+}
+
+function pickRandomTarget() {
+  return Math.floor(Math.random() * buttons.length);
+}
+
+function initialiseTask() {
+  task.currentTargetIndex = pickRandomTarget();
+  task.correctPresses = 0;
+  task.missedAttempts = 0;
+  task.started = false;
+  task.completed = false;
+  task.startTimeMs = 0;
+  task.endTimeMs = 0;
 }
 
 async function setupHandLandmarker() {
@@ -118,34 +143,60 @@ function updateCursorUi() {
   cursorEl.classList.toggle("grabbed", state.isGrabbing);
 }
 
-function updateHover() {
+function clearHoverStates() {
   buttons.forEach((btn) => btn.classList.remove("hovered"));
+}
 
-  if (state.activatedIndex !== null) {
-    buttons[state.activatedIndex]?.classList.add("activated");
+function clearActivatedStates() {
+  buttons.forEach((btn) => btn.classList.remove("activated"));
+}
+
+function updateTargetGlow() {
+  buttons.forEach((btn) => btn.classList.remove("glowing"));
+
+  if (task.completed || task.currentTargetIndex === null) return;
+
+  const btn = buttons[task.currentTargetIndex];
+  if (btn) {
+    btn.classList.add("glowing");
   }
+}
 
-  if (!state.isGrabbing) {
+function updateHover() {
+  clearHoverStates();
+
+  if (!state.isGrabbing || task.completed) {
     return;
   }
 
   const clampedX = Math.min(0.9999, Math.max(0, state.cursorX));
   const hovered = Math.floor(clampedX * buttons.length);
-
   state.pendingSelectionIndex = hovered;
 
   const btn = buttons[hovered];
-  if (!btn) {
-    return;
-  }
+  if (!btn) return;
 
   btn.classList.add("hovered");
+}
+
+function finishTask() {
+  task.completed = true;
+  task.endTimeMs = performance.now();
+
+  clearHoverStates();
+  updateTargetGlow();
+
+  const totalTimeSeconds = ((task.endTimeMs - task.startTimeMs) / 1000).toFixed(2);
+
+  alert(
+    `Task complete.\nMissed attempts: ${task.missedAttempts}\nTotal time: ${totalTimeSeconds}s`
+  );
 }
 
 function commitSelectionOnRelease() {
   const justReleased = state.wasGrabbingLastFrame && !state.isGrabbing;
 
-  if (!justReleased) {
+  if (!justReleased || task.completed) {
     return;
   }
 
@@ -156,12 +207,28 @@ function commitSelectionOnRelease() {
     return;
   }
 
-  if (state.activatedIndex !== null) {
-    buttons[state.activatedIndex]?.classList.remove("activated");
-  }
+  if (selectedIndex === task.currentTargetIndex) {
+    if (!task.started) {
+      task.started = true;
+      task.startTimeMs = performance.now();
+    }
 
-  state.activatedIndex = selectedIndex;
-  buttons[selectedIndex].classList.add("activated");
+    clearActivatedStates();
+    buttons[selectedIndex].classList.add("activated");
+
+    task.correctPresses += 1;
+
+    if (task.correctPresses >= TASK_LENGTH) {
+      state.pendingSelectionIndex = null;
+      finishTask();
+      return;
+    }
+
+    task.currentTargetIndex = pickRandomTarget();
+    updateTargetGlow();
+  } else {
+    task.missedAttempts += 1;
+  }
 
   state.pendingSelectionIndex = null;
 }
@@ -207,7 +274,6 @@ function updateFromLandmarks(landmarks, nowMs) {
     const targetX = Math.min(0.95, Math.max(0.05, state.anchorCursorX + movement));
     const delta = targetX - state.cursorX;
     state.cursorX += delta;
-
   }
 
   updateCursorUi();
@@ -271,11 +337,7 @@ function renderLoop() {
         state.gestureSeenSince = 0;
         state.gestureLostSince = 0;
 
-        buttons.forEach((btn) => btn.classList.remove("hovered"));
-
-        if (state.activatedIndex !== null) {
-          buttons[state.activatedIndex]?.classList.add("activated");
-        }
+        clearHoverStates();
       }
 
       updateCursorUi();
@@ -286,5 +348,7 @@ function renderLoop() {
   animationFrameId = requestAnimationFrame(renderLoop);
 }
 
+initialiseTask();
 await setupHandLandmarker();
 updateCursorUi();
+updateTargetGlow();

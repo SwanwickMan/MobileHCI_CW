@@ -307,3 +307,6 @@ video {
   transition: width 0.08s linear;
 }
 
+.target-btn.glowing {
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.9), 0 0 12px rgba(255, 215, 0, 0.8);
+}
